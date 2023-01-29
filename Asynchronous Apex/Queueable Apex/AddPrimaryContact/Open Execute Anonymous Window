@@ -1,0 +1,3 @@
+Contact contact = new Contact(FirstName='Simple',LastName='Test');
+insert contact;
+Id jobId = System.enqueueJob(new AddPrimaryContact(contact,'CA'));
