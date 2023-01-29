@@ -1,0 +1,24 @@
+//Apex batch class for mass pricebook update on Account based on Customer Price Group.
+
+global class PricebooksOnAccountsUpdateBatch implements Database.Batchable<sObject> {
+    global Database.Querylocator start(Database.BatchableContext BC) {
+        return Database.getQueryLocator([Select id, Customer_Price_Group__c, Price_book__c FROM Account WHERE Actual_Pricebook__c = FALSE AND Customer_Price_Group__c != null]);
+    }
+    global void execute(Database.BatchableContext BC,List<Account> scope) {
+        List<Account> accRec = [Select id, Customer_Price_Group__c, Price_book__c FROM Account WHERE Customer_Price_Group__c != null AND Actual_Pricebook__c = FALSE AND Id = :scope];
+        
+       Map<String, Id> pricebookByGroup = new Map<String, Id>();
+       Set<String> priceGroups = new Set<String>();
+       for(Account record: accRec) {
+          priceGroups.add(record.Customer_Price_Group__c);
+       }
+       for(Pricebook2 record: [SELECT Customer_Price_Group__c FROM Pricebook2 WHERE Year_Is_Actual__c = true AND Customer_Price_Group__c = :priceGroups]) {
+          pricebookByGroup.put(record.Customer_Price_Group__c, record.Id);
+       }
+       for(Account record: accRec) {
+        record.Price_Book__c = pricebookByGroup.get(record.Customer_Price_Group__c);
+       }
+update accRec;
+    }
+    global void finish(Database.BatchableContext BC){}
+}
