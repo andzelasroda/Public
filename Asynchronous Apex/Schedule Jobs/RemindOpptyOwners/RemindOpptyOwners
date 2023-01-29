@@ -1,0 +1,12 @@
+//This class queries for open opportunities that should have closed by the current date, and creates a task on each one to remind the owner to update the opportunity.
+
+public class RemindOpptyOwners implements Schedulable {
+    public void execute(SchedulableContext ctx) {
+        List<Opportunity> opptys = [SELECT Id, Name, OwnerId, CloseDate
+            FROM Opportunity
+            WHERE IsClosed = False AND
+            CloseDate < TODAY];
+        // Create a task for each opportunity in the list
+        TaskUtils.remindOwners(opptys);
+    }
+}
