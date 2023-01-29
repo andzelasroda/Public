@@ -1,0 +1,23 @@
+public class LeadProcessor implements
+Database.Batchable<sObject>, Database.Stateful {
+    
+    public Integer recordCount = 0;
+    
+    public Database.QueryLocator start(Database.BatchableContext bc) {
+        return Database.getQueryLocator(
+            'SELECT ID, LeadSource FROM Lead WHERE LeadSource != 'Dreamforce''
+        );
+    }
+    public void execute(Database.BatchableContext bc, List<Lead> scope){
+        // process each batch of records
+        for (Lead l : scope) {
+            l.LeadSource = 'Dreamforce';
+        }
+        update scope;
+        recordCount = recordCount + scope.size();
+        System.debug('Records processed so far ' + recordCount);
+    }
+    public void finish(Database.BatchableContext bc){
+        System.debug('Total records processed ' + recordCount);
+    }
+}
