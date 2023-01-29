@@ -1,0 +1,35 @@
+@isTest
+private class pricebooksOnAccountsUpdateBatchTest {
+    static testMethod void testPricebooksUpdate(){
+        
+       //Insert Pricebook
+      Pricebook2 pb = new Pricebook2(Name='Test', Price_Book_Year__c = '2023', IsActive = TRUE, Customer_Price_Group__c = 'pbTest', Company_Code__c = 'DK31');
+      insert pb;
+                        
+        
+        //Insert Product
+      Product2 prod = new Product2(Name='prodTest', IsActive = TRUE, Company_Code__c = 'DK31', ProductCode = '1000200');
+      insert prod;
+       
+        
+         //Insert PricebookEntry
+      PricebookEntry pbe = new PricebookEntry(Product2Id = prod.id, UnitPrice = 100, Pricebook2Id = pb.id, IsActive = TRUE);
+      insert pbe;
+        
+        
+         //Insert Account
+      Account acct = new Account(Name='TestClassAccount', Customer_Segment__c = 'Hospitals', Calibration_Intervals__c = 'Half year', Customer_Price_Group__c = 'pbTest');
+      insert acct;
+        
+        
+        Test.startTest();
+        pricebooksOnAccountsUpdateBatch scope = new pricebooksOnAccountsUpdateBatch();
+        Database.executeBatch(scope);
+        Test.stopTest();
+        
+        //Verify the results
+        System.assertEquals(1, [SELECT count() from Account WHERE Price_Book__c != NULL]);
+        
+    }
+
+}
