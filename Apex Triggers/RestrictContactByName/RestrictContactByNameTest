@@ -1,0 +1,18 @@
+@isTest
+private class RestrictContactByNameTest {
+    @isTest
+    static void TestInvalidName(){
+        // Test data setup
+        // Create Contact record with INVALIDNAME LastName
+        Contact ct = new Contact(LastName='INVALIDNAME');
+        
+        //Perform test
+        Test.startTest();
+        Database.SaveResult result = Database.insert(ct, false);
+        Test.stopTest();
+        
+        //Verify the results
+        System.assert(!result.isSuccess());
+        System.assert(result.getErrors().size() > 0);
+    }
+}
