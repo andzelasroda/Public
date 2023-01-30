@@ -1,0 +1,13 @@
+//Apex class that returns a list of contacts based on two incoming parameters: the number of contacts to generate and the last name
+@isTest
+public class RandomContactFactory {
+    public static List<Contact> generateRandomContacts (Integer numContacts, String uniqueLastName) {
+        List<Contact> contacts = new List<Contact>();
+        for(Integer i=0;i<numContacts;i++){
+            Contact c = new Contact(FirstName = 'Test' + i, LastName = uniqueLastName);
+            contacts.add(c);
+        }
+        insert contacts;
+        return contacts;
+    }
+}
