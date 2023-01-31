@@ -1,0 +1,24 @@
+@isTest
+private class AddRelatedRecordTest {
+    @isTest
+    private static void InsertAccount(){
+        //Add dummy data
+        Account acct = new Account(Name='Dummy');
+        
+        //Perform test
+        Test.startTest();
+        Database.SaveResult result = Database.insert(acct, false);
+        
+        Account myAcct =
+            [SELECT Id, Name, BillingCity
+             FROM Account WHERE Id = :acct.Id];
+        
+        myAcct.BillingCity = 'San Francisco';
+        Database.SaveResult SR = Database.update(myAcct);
+        Test.stopTest();
+        
+        //Verify the results
+        System.assert(result.isSuccess());
+        System.assertEquals(1, [SELECT count() from Opportunity WHERE Account.Name = 'Dummy']);
+    }
+}
